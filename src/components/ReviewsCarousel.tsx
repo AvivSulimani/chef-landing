@@ -57,7 +57,7 @@ export function ReviewsCarousel({ children }: { children: React.ReactNode }) {
         aria-roledescription="carousel"
         aria-label="המלצות של לקוחות"
         tabIndex={0}
-        className="relative -mx-6 flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth px-6 pb-1 [scrollbar-width:none] md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden"
+        className="relative -mx-6 flex snap-x snap-mandatory scroll-px-6 gap-6 overflow-x-auto scroll-smooth px-6 pb-1 [scrollbar-width:none] md:mx-0 md:scroll-px-0 md:px-0 [&::-webkit-scrollbar]:hidden"
       >
         {children}
       </div>

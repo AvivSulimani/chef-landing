@@ -221,7 +221,7 @@ export const reviewCards: ReviewCard[] = [
     alt: "הודעת וואטסאפ משירן: הארוחה הייתה מיוחדת, עשירה, טעימה ומפנקת",
     transcript:
       "היי אביב, תודה רבה על אתמול. הארוחה הייתה מיוחדת, עשירה, טעימה ומפנקת. בכל ביס הרגשתי את המחשבה מאחורי המנה. שמחתי להכיר.",
-    desktop: { src: "/reviews/chat/shiran-wa.jpg", width: 816, height: 603 },
+    desktop: { src: "/reviews/chat/shiran-wa.jpg", width: 860, height: 630 },
   },
 ];
 

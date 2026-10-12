@@ -1,7 +1,9 @@
 import Image, { getImageProps } from "next/image";
 import {
   business,
-  reviewCards,
+  orderedReviewCards,
+  REVIEW_CHAT_SCALE,
+  REVIEW_WEB_WIDTH,
   services,
   story,
   type ReviewCard,
@@ -175,17 +177,24 @@ export function ServiceSections() {
  * desktop-sized image above. Falls back to the desktop file until a phone
  * screenshot exists.
  */
+function reviewWidth(review: ReviewCard) {
+  return review.layout === "chat"
+    ? Math.round(review.desktop.width * REVIEW_CHAT_SCALE)
+    : REVIEW_WEB_WIDTH;
+}
+
 function ReviewPicture({ review }: { review: ReviewCard }) {
+  const width = reviewWidth(review);
   const common = { alt: review.alt, quality: 90 };
   const desktop = getImageProps({
     ...common,
     ...review.desktop,
-    sizes: "640px",
+    sizes: `${width}px`,
   });
   const mobile = getImageProps({
     ...common,
     ...(review.mobile ?? review.desktop),
-    sizes: "(max-width: 767px) 86vw, 640px",
+    sizes: `(max-width: 767px) min(86vw, ${width}px), ${width}px`,
   });
 
   return (
@@ -210,17 +219,35 @@ export function Reviews() {
         </div>
 
         <ReviewsCarousel>
-          {reviewCards.map((review) => (
-            <figure
-              key={review.id}
-              className="w-[86vw] max-w-[640px] shrink-0 snap-start overflow-hidden border border-rule bg-white md:w-[640px]"
-            >
-              <ReviewPicture review={review} />
-              <figcaption className="sr-only">
-                {review.source} · {review.author}: {review.transcript}
-              </figcaption>
-            </figure>
-          ))}
+          {orderedReviewCards.map((review) => {
+            // A desktop-width screenshot is unreadable on a phone. Until a phone
+            // screenshot is supplied, small screens get the transcript as text.
+            const textFallback = review.layout === "web" && !review.mobile;
+            return (
+              <figure
+                key={review.id}
+                style={{ width: reviewWidth(review) }}
+                className={`max-w-[86vw] shrink-0 snap-start self-start overflow-hidden border border-rule ${
+                  review.layout === "chat" ? "bg-[#f0ece4]" : "bg-white"
+                }`}
+              >
+                <div className={textFallback ? "hidden md:block" : undefined}>
+                  <ReviewPicture review={review} />
+                </div>
+                {textFallback && (
+                  <div aria-hidden="true" className="flex flex-col gap-4 p-5 md:hidden">
+                    <p className="font-serif text-[15px] leading-[1.85]">{review.transcript}</p>
+                    <span className={eyebrow}>
+                      {review.author} · {review.source.toUpperCase()}
+                    </span>
+                  </div>
+                )}
+                <figcaption className="sr-only">
+                  {review.source} · {review.author}: {review.transcript}
+                </figcaption>
+              </figure>
+            );
+          })}
         </ReviewsCarousel>
       </div>
     </section>

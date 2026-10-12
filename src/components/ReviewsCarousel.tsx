@@ -13,12 +13,24 @@ const GAP = 24;
 export function ReviewsCarousel({ children }: { children: React.ReactNode }) {
   const track = useRef<HTMLDivElement>(null);
   const [view, setView] = useState({ offset: 0, size: 0, atStart: true, atEnd: false });
+  // Cards have different heights; the track follows the tallest card in view so
+  // a short review is not followed by a tall empty gap.
+  const [height, setHeight] = useState<number | undefined>(undefined);
 
   const measure = useCallback(() => {
     const el = track.current;
     if (!el || el.scrollWidth === 0) return;
     const max = el.scrollWidth - el.clientWidth;
     const pos = Math.abs(el.scrollLeft);
+
+    const box = el.getBoundingClientRect();
+    let tallest = 0;
+    for (const child of Array.from(el.children) as HTMLElement[]) {
+      const r = child.getBoundingClientRect();
+      const shown = Math.min(r.right, box.right) - Math.max(r.left, box.left);
+      if (shown > r.width * 0.5) tallest = Math.max(tallest, child.offsetHeight);
+    }
+    if (tallest) setHeight(tallest + 4); // + the track's pb-1
     setView({
       offset: pos / el.scrollWidth,
       size: Math.min(1, el.clientWidth / el.scrollWidth),
@@ -33,6 +45,8 @@ export function ReviewsCarousel({ children }: { children: React.ReactNode }) {
     // The observer fires once on observe, which also gives the first measurement.
     const observer = new ResizeObserver(measure);
     observer.observe(el);
+    // Cards can also change size on their own (fonts, late image metadata).
+    Array.from(el.children).forEach((child) => observer.observe(child));
     return () => observer.disconnect();
   }, [measure]);
 
@@ -57,7 +71,8 @@ export function ReviewsCarousel({ children }: { children: React.ReactNode }) {
         aria-roledescription="carousel"
         aria-label="המלצות של לקוחות"
         tabIndex={0}
-        className="relative -mx-6 flex snap-x snap-mandatory scroll-px-6 gap-6 overflow-x-auto scroll-smooth px-6 pb-1 [scrollbar-width:none] md:mx-0 md:scroll-px-0 md:px-0 [&::-webkit-scrollbar]:hidden"
+        style={{ height }}
+        className="relative -mx-6 flex snap-x snap-mandatory scroll-px-6 gap-6 overflow-x-auto overflow-y-hidden scroll-smooth px-6 pb-1 transition-[height] duration-300 [scrollbar-width:none] md:mx-0 md:scroll-px-0 md:px-0 [&::-webkit-scrollbar]:hidden"
       >
         {children}
       </div>

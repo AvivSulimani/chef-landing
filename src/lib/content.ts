@@ -109,8 +109,19 @@ export const services: Service[] = [
  */
 export type ReviewImage = { src: string; width: number; height: number };
 
+/**
+ * "web" screenshots (Google, Facebook) are wide and shown at 720px.
+ * "chat" screenshots come from a phone and are shown at a fixed 0.4 scale of
+ * their natural width, which puts their text at about the same size (~13.5px).
+ */
+export type ReviewLayout = "web" | "chat";
+
+export const REVIEW_WEB_WIDTH = 720;
+export const REVIEW_CHAT_SCALE = 0.36;
+
 export type ReviewCard = {
   id: string;
+  layout: ReviewLayout;
   /** Where the review was written; shown only to assistive tech. */
   source: "Google" | "WhatsApp" | "Instagram" | "Facebook";
   author: string;
@@ -124,6 +135,7 @@ export type ReviewCard = {
 export const reviewCards: ReviewCard[] = [
   {
     id: "omri",
+    layout: "web",
     source: "Google",
     author: "עומרי רפאלי",
     alt: "ביקורת גוגל בת 5 כוכבים מאת עומרי רפאלי, עם תמונות של מנות",
@@ -133,6 +145,7 @@ export const reviewCards: ReviewCard[] = [
   },
   {
     id: "abigail",
+    layout: "web",
     source: "Google",
     author: "abigail r",
     alt: "ביקורת גוגל בת 5 כוכבים מאת abigail r על החתונה",
@@ -142,6 +155,7 @@ export const reviewCards: ReviewCard[] = [
   },
   {
     id: "adar",
+    layout: "web",
     source: "Google",
     author: "אדר קדוש",
     alt: "ביקורת גוגל בת 5 כוכבים מאת אדר קדוש על ארוחת טעימות בצימר",
@@ -151,6 +165,7 @@ export const reviewCards: ReviewCard[] = [
   },
   {
     id: "shiran",
+    layout: "web",
     source: "Google",
     author: "Shiran Michaeli",
     alt: "ביקורת גוגל בת 5 כוכבים מאת Shiran Michaeli על אירוע ברית בבית",
@@ -160,6 +175,7 @@ export const reviewCards: ReviewCard[] = [
   },
   {
     id: "shelly",
+    layout: "web",
     source: "Google",
     author: "Shelly Sitton",
     alt: "ביקורת גוגל בת 5 כוכבים מאת Shelly Sitton על ערב טעימות זוגי",
@@ -169,6 +185,7 @@ export const reviewCards: ReviewCard[] = [
   },
   {
     id: "efrat",
+    layout: "web",
     source: "Google",
     author: "Efrat Gorohovski",
     alt: "ביקורת גוגל בת 5 כוכבים מאת Efrat Gorohovski על ארוחת יום הולדת",
@@ -176,4 +193,52 @@ export const reviewCards: ReviewCard[] = [
       "שף אביב המקסים, ערך לנו ארוחת ערב מדהימה לכבוד יום הולדת שחגגנו. בין היתר בתפריט סשימי דג עם שסק! כן כן שסק מהעץ שלו. טרטר דגי ים על עלי כובע הנזיר - אחד הנדירים שאכלתי. זוקיני עם פטל ואגוזי מלך, ברוסקטה עם מבחר עגבניות וריקוטה שהוא מכין בעצמו - אלוהי. פוקצ'ה בליווי ריבית תפוזי דם וחמאה עם לימון כבוש... ואלו היו רק חלק המנות הראשונות... המטבח הקטן שלי לא מאמין עד עכשיו שזה מה שאפשר להוציא ממנו... היום עוד נשנשתי מהשעועית ברוטב מיסו שאי אפשר להפסיק לאכול אותה ואני מחכה בקוצר רוח לסלט עם הפקוס ולפסטה שעוד מחכים לי במקרר. ולסיום הקינוחים המעולים ובראשם הפינסטייר והגלידה גרניום לימוני המוש!!!! אנחנו כבר מתכננים את הפעם הבאה שנזמין אותו. היה כיף!",
     desktop: { src: "/reviews/desktop/efrat.png", width: 852, height: 400 },
   },
+  {
+    id: "alona",
+    layout: "chat",
+    source: "WhatsApp",
+    author: "אלונה",
+    alt: "הודעת וואטסאפ מאלונה: תודה על ערב מיוחד",
+    transcript:
+      "היי אביב, רק עכשיו ירדתי מהענן שהייתי עליו. אז אני חייבת להגיד לך תודה על אתמול! היה טעים ביותר, ייחודי ושניכם השרתם אווירה כזו רגועה ונינחה. תודה על ערב מיוחד. תשלח לי את הפרטי אינסטגרם שלך כי כמה בנות ביקשו.",
+    desktop: { src: "/reviews/chat/alona.jpg", width: 918, height: 831 },
+  },
+  {
+    id: "medina",
+    layout: "chat",
+    source: "WhatsApp",
+    author: "מדינה",
+    alt: "הודעת וואטסאפ ממדינה על ארוחת טעימות",
+    transcript:
+      "האירוע היה מדויק מוקפד מושקע. הצוות עמד בזמנים. התאים את התפריט לכל האנשים שחלקם די בעייתים באוכל. ממש חוויה קולינרית כיפית מומלץ מאוד!",
+    desktop: { src: "/reviews/chat/medina.jpg", width: 830, height: 686 },
+  },
+  {
+    id: "shiran-wa",
+    layout: "chat",
+    source: "WhatsApp",
+    author: "שירן",
+    alt: "הודעת וואטסאפ משירן: הארוחה הייתה מיוחדת, עשירה, טעימה ומפנקת",
+    transcript:
+      "היי אביב, תודה רבה על אתמול. הארוחה הייתה מיוחדת, עשירה, טעימה ומפנקת. בכל ביס הרגשתי את המחשבה מאחורי המנה. שמחתי להכיר.",
+    desktop: { src: "/reviews/chat/shiran-wa.jpg", width: 816, height: 603 },
+  },
 ];
+
+const reviewOrder = [
+  "omri",
+  "alona",
+  "abigail",
+  "medina",
+  "adar",
+  "shiran",
+  "shelly",
+  "shiran-wa",
+  "efrat",
+];
+
+export const orderedReviewCards: ReviewCard[] = reviewOrder.map((id) => {
+  const card = reviewCards.find((c) => c.id === id);
+  if (!card) throw new Error(`Unknown review card: ${id}`);
+  return card;
+});

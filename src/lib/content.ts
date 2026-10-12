@@ -100,40 +100,53 @@ export const services: Service[] = [
 ];
 
 /**
- * Reviews are transcribed by hand from the Google Business listing.
- * Placeholder entries stay until the real ones are supplied.
+ * Customer reviews are shown as the original screenshots, from several
+ * sources. Every file is normalised to one canvas width so text keeps the
+ * same scale across cards.
+ *
+ * `mobile` is an optional phone-sized screenshot; until one exists the
+ * desktop image is used on small screens too.
  */
-export type Review = {
-  text: string;
+export type ReviewImage = { src: string; width: number; height: number };
+
+export type ReviewCard = {
+  id: string;
+  /** Where the review was written; shown only to assistive tech. */
+  source: "Google" | "WhatsApp" | "Instagram" | "Facebook";
   author: string;
-  when: string;
-  rating: number;
+  alt: string;
+  /** Plain-text version of the screenshot, for screen readers and search. */
+  transcript: string;
+  desktop: ReviewImage;
+  mobile?: ReviewImage;
 };
 
-export const reviewsSummary = {
-  rating: "[5.0]",
-  count: "[12]",
-  googleUrl: "",
-  isPlaceholder: true,
-};
-
-export const reviews: Review[] = [
+export const reviewCards: ReviewCard[] = [
   {
-    text: "[טקסט הביקורת מגוגל יופיע כאן. הבלוק מציג עד ארבע שורות, ומה שארוך מזה נחתך.]",
-    author: "[שם הלקוח]",
-    when: "[לפני חודשיים]",
-    rating: 5,
+    id: "abigail",
+    source: "Google",
+    author: "abigail r",
+    alt: "ביקורת גוגל בת 5 כוכבים מאת abigail r על החתונה",
+    transcript:
+      "אביב המקסים תודה על החתונה המושלמת! האוכל הכי טעים שאכלנו בחתונה. באמת. אם אתם מחפשים קייטרינג שהוא משהו קצת אחר, כזה שהאורחים לא יפסיקו לדבר עליו גם הרבה אחרי האירוע אביב הוא הכתובת. מהרגע שהחתונה נגמרה אנחנו רק מקבלים הודעות על האוכל. כולם התלהבו בטירוף ואמרו כמה היה טעים ומיוחד. אפילו הספקים שלנו, שכבר היו בלא מעט חתונות, אמרו שזה הקייטרינג הכי טוב שהם אכלו. אביב היה פשוט מדהים לאורך כל הדרך. הוא ליווה אותנו, היה קשוב לכל בקשה, ובנה לנו תפריט שהתאים בדיוק למה שרצינו. היו לנו אורחים טבעונים, צמחונים, רגישים לגלוטן (כלה צליאקית זה לא אירוע קל) ועוד כל מיני בקשות, והוא דאג שלכולם יהיו מנות מושקעות וטעימות, בלי שאף אחד ירגיש שמתפשרים. מעבר לאוכל, היה פשוט כיף לעבוד איתו. הוא מקצועי, רגוע, זמין, ונתן לנו תחושה שיש על מי לסמוך. ביום האירוע הכול התנהל בצורה מושלמת, ואנחנו יכולים להגיד בלב שלם שזו הייתה אחת הבחירות הכי טובות שעשינו.",
+    desktop: { src: "/reviews/desktop/abigail.png", width: 852, height: 498 },
   },
   {
-    text: "[ביקורת שנייה. אורכי הביקורות משתנים, ולכן כל העמודות מיושרות לגובה אחיד.]",
-    author: "[שם הלקוח]",
-    when: "[לפני 3 חודשים]",
-    rating: 5,
+    id: "omri",
+    source: "Google",
+    author: "עומרי רפאלי",
+    alt: "ביקורת גוגל בת 5 כוכבים מאת עומרי רפאלי, עם תמונות של מנות",
+    transcript:
+      "אביב יקר, תודה לך על ערב מיוחד במינו. על נדיבות, מקצועיות ושקט נפשי. נטע ואתה, בדרך שקטה ומאורגנת הענקתם לנו ערב בלתי נשכח, עם האנשים והטעמים האהובים עלינו ביותר. תודה מקרב לב.",
+    desktop: { src: "/reviews/desktop/omri.png", width: 852, height: 464 },
   },
   {
-    text: "[ביקורת שלישית. אם יש פחות משלוש ביקורות, הבלוק מצמצם את הגריד בהתאם.]",
-    author: "[שם הלקוח]",
-    when: "[לפני 5 חודשים]",
-    rating: 5,
+    id: "shelly",
+    source: "Google",
+    author: "Shelly Sitton",
+    alt: "ביקורת גוגל בת 5 כוכבים מאת Shelly Sitton על ערב טעימות זוגי",
+    transcript:
+      "אני חייבת לפרגן מהלב על החוויה המטורפת שהייתה לנו אתמול. בן הזוג שלי הפתיע אותי בערב חגיגי לציון השנה שלנו, וזה לגמרי היה אחד הערבים הכי מיוחדים שחוויתי. אביב שליווה אותנו לאורך כל הערב היה פשוט יוצא דופן. לא רק בבישול, אלא גם בנוכחות, בהגשה ובהסברים. הוא הגיש כל מנה בעצמו, פירט עליה בצורה מרתקת, ובעיקר יצר אווירה מדויקת, נעימה וסוחפת. תפריט של עשר מנות שלקח אותנו למסע בין עונות השנה, מקיץ לחורף, כשכל מנה מובילה בטעם, ברגש ובחוויה לשלב הבא. והייתה מנה אחת שלא הצלחתי להפסיק לחייך מרוב הנאה. פסטה מיוחדת עם מילוי דלעת וסלרי שגרם לי להבין כמה הערב הזה מיוחד. השילוב בין האוכל המטורף, הסיפור שאביב בנה, והשירות האישי והמדויק הפך את כל החוויה לבלתי נשכחת. אין ספק שאני עוד אחזור.",
+    desktop: { src: "/reviews/desktop/shelly.png", width: 852, height: 551 },
   },
 ];

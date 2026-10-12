@@ -1,11 +1,16 @@
-import Image from "next/image";
-import { business, reviews, reviewsSummary, services, story } from "@/lib/content";
+import Image, { getImageProps } from "next/image";
 import {
-  Chevron,
+  business,
+  reviewCards,
+  services,
+  story,
+  type ReviewCard,
+} from "@/lib/content";
+import { ReviewsCarousel } from "./ReviewsCarousel";
+import {
   FacebookIcon,
   InstagramIcon,
   ServiceIcon,
-  Star,
   WhatsappIcon,
 } from "./icons";
 
@@ -165,13 +170,33 @@ export function ServiceSections() {
   );
 }
 
-function Stars({ count = 5 }: { count?: number }) {
+/**
+ * One review screenshot with art direction: phone-sized image below `md`,
+ * desktop-sized image above. Falls back to the desktop file until a phone
+ * screenshot exists.
+ */
+function ReviewPicture({ review }: { review: ReviewCard }) {
+  const common = { alt: review.alt, quality: 90 };
+  const desktop = getImageProps({
+    ...common,
+    ...review.desktop,
+    sizes: "640px",
+  });
+  const mobile = getImageProps({
+    ...common,
+    ...(review.mobile ?? review.desktop),
+    sizes: "(max-width: 767px) 86vw, 640px",
+  });
+
   return (
-    <div className="flex gap-1" aria-label={`${count} כוכבים`}>
-      {Array.from({ length: count }, (_, i) => (
-        <Star key={i} className="h-3.5 w-3.5" />
-      ))}
-    </div>
+    <picture>
+      <source
+        media="(min-width: 768px)"
+        srcSet={desktop.props.srcSet}
+        sizes={desktop.props.sizes}
+      />
+      <img {...mobile.props} alt={review.alt} className="block h-auto w-full" />
+    </picture>
   );
 }
 
@@ -180,76 +205,23 @@ export function Reviews() {
     <section id="reviews" className="bg-paper-warm px-6 py-16 md:px-14 md:py-[124px]">
       <div className="mx-auto flex max-w-[1180px] flex-col gap-8 md:gap-[52px]">
         <div className="flex flex-col items-center gap-2.5 md:gap-3.5">
-          <span className={eyebrow}>ביקורות מגוגל</span>
+          <span className={eyebrow}>המלצות מלקוחות</span>
           <h2 className="font-serif text-2xl md:text-[32px]">מה אומרים עלינו</h2>
         </div>
 
-        <div className="flex items-center justify-center gap-4 md:gap-5">
-          <span className="font-serif text-[32px] leading-none md:text-[40px]">
-            {reviewsSummary.rating}
-          </span>
-          <div className="flex flex-col gap-1.5">
-            <Stars />
-            <span className={eyebrow}>{reviewsSummary.count} ביקורות ב-GOOGLE</span>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-6 md:grid md:grid-cols-3 md:items-stretch md:gap-0">
-          {reviews.map((review, i) => (
-            <div
-              key={review.author + i}
-              className={`flex flex-col gap-3.5 md:gap-5 md:px-[38px] ${
-                i < reviews.length - 1
-                  ? "border-b border-rule pb-6 md:border-b-0 md:border-e md:pb-0"
-                  : ""
-              }`}
+        <ReviewsCarousel>
+          {reviewCards.map((review) => (
+            <figure
+              key={review.id}
+              className="w-[86vw] max-w-[640px] shrink-0 snap-start overflow-hidden border border-rule bg-white md:w-[640px]"
             >
-              <Stars count={review.rating} />
-              <p className="font-serif text-base leading-[1.8] md:text-[17.5px] md:leading-[1.85]">
-                {review.text}
-              </p>
-              <div className="flex flex-col gap-1 md:mt-auto">
-                <span className="text-[13.5px] md:text-sm">{review.author}</span>
-                <span className={eyebrow}>{review.when}</span>
-              </div>
-            </div>
+              <ReviewPicture review={review} />
+              <figcaption className="sr-only">
+                {review.source} · {review.author}: {review.transcript}
+              </figcaption>
+            </figure>
           ))}
-        </div>
-
-        <div className="flex items-center justify-between border-t border-rule pt-5 md:pt-[26px]">
-          {reviewsSummary.googleUrl ? (
-            <a
-              href={reviewsSummary.googleUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={textLink}
-            >
-              כל הביקורות בגוגל
-            </a>
-          ) : (
-            <span className={`${textLink} opacity-60`}>כל הביקורות בגוגל</span>
-          )}
-          <div className="flex items-center gap-3 md:gap-[22px]">
-            <div className="flex items-center gap-2">
-              {reviews.map((_, i) => (
-                <span
-                  key={i}
-                  className={`block rounded-full ${
-                    i === 0 ? "h-[7px] w-[7px] bg-ink" : "h-1.5 w-1.5 bg-ink/25"
-                  }`}
-                />
-              ))}
-            </div>
-            <div className="hidden gap-2.5 md:flex">
-              <span className="flex h-[38px] w-[38px] items-center justify-center border border-ink/30">
-                <Chevron direction="start" className="h-3 w-3" />
-              </span>
-              <span className="flex h-[38px] w-[38px] items-center justify-center border border-ink/30">
-                <Chevron direction="end" className="h-3 w-3" />
-              </span>
-            </div>
-          </div>
-        </div>
+        </ReviewsCarousel>
       </div>
     </section>
   );

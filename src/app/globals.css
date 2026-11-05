@@ -25,6 +25,49 @@ body {
 
 html {
   scroll-behavior: smooth;
-  /* Keeps the page from shifting sideways when the gallery viewer hides the scrollbar. */
+  /* Keeps the page from shifting sideways when the gallery viewer or the menu hides the scrollbar. */
   scrollbar-gutter: stable;
+}
+
+/*
+ * The full-screen menu (see Nav.tsx). It fades in over half a second while its items rise into place one after
+ * another (the order comes from --d on each item), and fades out again faster. The duration of a change is the one
+ * of the state it moves to, so the open state carries the slow timings and the closed state the quick ones.
+ */
+.menu-panel {
+  opacity: 0;
+  transition: opacity 260ms ease-out;
+}
+.menu-panel[data-shown="true"] {
+  opacity: 1;
+  transition-duration: 480ms;
+}
+.menu-panel::backdrop {
+  background: transparent;
+}
+
+.menu-rise {
+  opacity: 0;
+  translate: 0 14px;
+  transition:
+    opacity 260ms ease-out,
+    translate 260ms ease-out;
+}
+.menu-panel[data-shown="true"] .menu-rise {
+  opacity: 1;
+  translate: 0 0;
+  transition-duration: 700ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--d, 0ms);
+}
+
+/* Less motion: the menu only fades, nothing travels and nothing waits for its turn. */
+@media (prefers-reduced-motion: reduce) {
+  .menu-rise {
+    translate: 0 0;
+  }
+  .menu-panel[data-shown="true"] .menu-rise {
+    transition-duration: 260ms;
+    transition-delay: 0ms;
+  }
 }

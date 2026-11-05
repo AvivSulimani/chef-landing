@@ -1,13 +1,13 @@
-import Image, { getImageProps } from "next/image";
+import Image from "next/image";
 import {
   business,
-  orderedReviewCards,
-  REVIEW_CHAT_SCALE,
-  REVIEW_WEB_WIDTH,
+  googleSummary,
+  reviewCards,
   services,
   story,
   type ReviewCard,
 } from "@/lib/content";
+import { distribute } from "@/lib/masonry";
 import { ContactForm } from "./ContactForm";
 import { ReviewsCarousel } from "./ReviewsCarousel";
 import { boxButton } from "./styles";
@@ -15,6 +15,7 @@ import {
   FacebookIcon,
   InstagramIcon,
   ServiceIcon,
+  Star,
   WhatsappIcon,
 } from "./icons";
 
@@ -175,35 +176,58 @@ export function ServiceSections() {
  * desktop-sized image above. Falls back to the desktop file until a phone
  * screenshot exists.
  */
-function reviewWidth(review: ReviewCard) {
-  return review.layout === "chat"
-    ? Math.round(review.desktop.width * REVIEW_CHAT_SCALE)
-    : REVIEW_WEB_WIDTH;
+function ReviewFigure({
+  review,
+  sizes,
+  className = "",
+}: {
+  review: ReviewCard;
+  sizes: string;
+  className?: string;
+}) {
+  // Chat screenshots sit on WhatsApp's beige wallpaper, so the card matches it
+  // while the image loads.
+  const tint = review.source === "WhatsApp" ? "bg-[#f0ece4]" : "bg-white";
+  return (
+    <figure className={`overflow-hidden border border-rule ${tint} ${className}`}>
+      <Image
+        src={review.image.src}
+        alt={review.alt}
+        width={review.image.width}
+        height={review.image.height}
+        sizes={sizes}
+        quality={90}
+        className="block h-auto w-full"
+      />
+      <figcaption className="sr-only">
+        {review.source} · {review.author}: {review.transcript}
+      </figcaption>
+    </figure>
+  );
 }
 
-function ReviewPicture({ review }: { review: ReviewCard }) {
-  const width = reviewWidth(review);
-  const common = { alt: review.alt, quality: 90 };
-  const desktop = getImageProps({
-    ...common,
-    ...review.desktop,
-    sizes: `${width}px`,
-  });
-  const mobile = getImageProps({
-    ...common,
-    ...(review.mobile ?? review.desktop),
-    sizes: `(max-width: 767px) min(86vw, ${width}px), ${width}px`,
-  });
-
+function GoogleSummary() {
   return (
-    <picture>
-      <source
-        media="(min-width: 768px)"
-        srcSet={desktop.props.srcSet}
-        sizes={desktop.props.sizes}
-      />
-      <img {...mobile.props} alt={review.alt} className="block h-auto w-full" />
-    </picture>
+    <a
+      href={googleSummary.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex items-center justify-center gap-4 md:gap-5"
+    >
+      <span className="font-serif text-[32px] leading-none md:text-[40px]">
+        {googleSummary.rating}
+      </span>
+      <div className="flex flex-col gap-1.5">
+        <div className="flex gap-1" aria-label={`${googleSummary.rating} כוכבים`}>
+          {Array.from({ length: 5 }, (_, i) => (
+            <Star key={i} className="h-3.5 w-3.5" />
+          ))}
+        </div>
+        <span className={`${eyebrow} transition-colors group-hover:text-ink`}>
+          {googleSummary.count} ביקורות בגוגל
+        </span>
+      </div>
+    </a>
   );
 }
 
@@ -216,37 +240,32 @@ export function Reviews() {
           <h2 className="font-serif text-2xl md:text-[32px]">מה אומרים עלינו</h2>
         </div>
 
-        <ReviewsCarousel>
-          {orderedReviewCards.map((review) => {
-            // A desktop-width screenshot is unreadable on a phone. Until a phone
-            // screenshot is supplied, small screens get the transcript as text.
-            const textFallback = review.layout === "web" && !review.mobile;
-            return (
-              <figure
+        <GoogleSummary />
+
+        {/* Phones and tablets: one card at a time */}
+        <div className="lg:hidden">
+          <ReviewsCarousel>
+            {reviewCards.map((review) => (
+              <ReviewFigure
                 key={review.id}
-                style={{ width: reviewWidth(review) }}
-                className={`max-w-[86vw] shrink-0 snap-start self-start overflow-hidden border border-rule ${
-                  review.layout === "chat" ? "bg-[#f0ece4]" : "bg-white"
-                }`}
-              >
-                <div className={textFallback ? "hidden md:block" : undefined}>
-                  <ReviewPicture review={review} />
-                </div>
-                {textFallback && (
-                  <div aria-hidden="true" className="flex flex-col gap-4 p-5 md:hidden">
-                    <p className="font-serif text-[15px] leading-[1.85]">{review.transcript}</p>
-                    <span className={eyebrow}>
-                      {review.author} · {review.source.toUpperCase()}
-                    </span>
-                  </div>
-                )}
-                <figcaption className="sr-only">
-                  {review.source} · {review.author}: {review.transcript}
-                </figcaption>
-              </figure>
-            );
-          })}
-        </ReviewsCarousel>
+                review={review}
+                sizes="min(86vw, 380px)"
+                className="w-[86vw] max-w-[380px] shrink-0 snap-start self-start"
+              />
+            ))}
+          </ReviewsCarousel>
+        </div>
+
+        {/* Desktop: a wall of cards in balanced columns */}
+        <div className="hidden items-start gap-5 lg:flex">
+          {distribute(reviewCards, 3).map((column, i) => (
+            <div key={i} className="flex min-w-0 flex-1 flex-col gap-5">
+              {column.map((review) => (
+                <ReviewFigure key={review.id} review={review} sizes="380px" />
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

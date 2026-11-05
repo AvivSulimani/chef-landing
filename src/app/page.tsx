@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Nav } from "@/components/Nav";
 import {
   Contact,
@@ -12,6 +13,10 @@ import {
   Story,
 } from "@/components/Sections";
 import { business } from "@/lib/content";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default function Home() {
   return (

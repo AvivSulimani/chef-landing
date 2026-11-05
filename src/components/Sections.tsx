@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import {
   business,
   services,
@@ -246,10 +247,18 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="mx-auto mt-7 max-w-[1180px] border-t border-rule pt-5 md:mt-0 md:pt-6">
+      <div className="mx-auto mt-7 flex max-w-[1180px] flex-col gap-3.5 border-t border-rule pt-5 md:mt-0 md:flex-row md:items-center md:justify-between md:pt-6">
         <span className="text-[10.5px] tracking-[1.2px] text-ink-faint md:text-[11px] md:tracking-[1.4px]">
           © {new Date().getFullYear()} SOIL BY AVIV SULIMANI · כל הזכויות שמורות
         </span>
+        <div className="flex gap-5 text-[11.5px] tracking-[1px] text-ink-muted md:text-xs">
+          <Link href="/accessibility" className="transition-colors hover:text-accent">
+            הצהרת נגישות
+          </Link>
+          <Link href="/privacy" className="transition-colors hover:text-accent">
+            מדיניות פרטיות
+          </Link>
+        </div>
       </div>
     </footer>
   );

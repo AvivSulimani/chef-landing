@@ -54,7 +54,7 @@ export function OriginalReview({
           </button>
           <Image
             src={review.image.src}
-            alt={review.alt}
+            alt={`${review.alt}: ${review.transcript}`}
             width={review.image.width}
             height={review.image.height}
             sizes="(max-width: 640px) 94vw, 620px"

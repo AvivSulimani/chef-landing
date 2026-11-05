@@ -25,4 +25,6 @@ body {
 
 html {
   scroll-behavior: smooth;
+  /* Keeps the page from shifting sideways when the gallery viewer hides the scrollbar. */
+  scrollbar-gutter: stable;
 }

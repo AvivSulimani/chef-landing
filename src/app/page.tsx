@@ -3,6 +3,7 @@ import {
   Contact,
   Footer,
   FullBleed,
+  Gallery,
   Hero,
   Reviews,
   ServiceSections,
@@ -27,6 +28,7 @@ export default function Home() {
         />
         <ServicesIndex />
         <ServiceSections />
+        <Gallery />
         <Reviews />
         <FullBleed
           src="/images/dish.jpg"

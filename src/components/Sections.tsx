@@ -255,4 +255,5 @@ export function Footer() {
   );
 }
 
+export { GallerySection as Gallery } from "./gallery/GallerySection";
 export { ReviewsSection as Reviews } from "./reviews/ReviewsSection";

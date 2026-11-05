@@ -19,6 +19,7 @@ export const business = {
 export const nav = [
   { label: "אודות", href: "#about" },
   { label: "שירותים", href: "#services" },
+  { label: "גלריה", href: "#gallery" },
   { label: "ביקורות", href: "#reviews" },
   { label: "צור קשר", href: "#contact" },
 ];

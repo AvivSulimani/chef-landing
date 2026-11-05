@@ -50,8 +50,8 @@ function Attribution({ review }: { review: ReviewCard }) {
  * slide, otherwise it settles back. A drag never counts as a click.
  *
  * Autoplay runs while the section is on screen, pauses on hover and focus, and
- * stops for good once the visitor navigates. It does not loop. Respects reduced
- * motion.
+ * stops for good once the visitor takes over (a swipe, a drag, an arrow, a dash
+ * or a key). It does not loop. Respects reduced motion.
  */
 export function QuoteSlider({ cards }: { cards: ReviewCard[] }) {
   const count = cards.length;
@@ -113,7 +113,13 @@ export function QuoteSlider({ cards }: { cards: ReviewCard[] }) {
 
   function onPointerDown(e: React.PointerEvent<HTMLDivElement>) {
     const el = track.current;
-    if (!el || e.pointerType !== "mouse" || e.button !== 0) return;
+    if (!el) return;
+    if (e.pointerType !== "mouse") {
+      // a finger or pen: the track scrolls natively, and the visitor is in charge now
+      setStopped(true);
+      return;
+    }
+    if (e.button !== 0) return;
     drag.current = {
       id: e.pointerId,
       startX: e.clientX,
@@ -203,6 +209,10 @@ export function QuoteSlider({ cards }: { cards: ReviewCard[] }) {
         onPointerMove={onPointerMove}
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
+        onWheel={(e) => {
+          // a sideways trackpad swipe: the visitor is in charge now
+          if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) setStopped(true);
+        }}
         onDragStart={(e) => e.preventDefault()}
         onClickCapture={(e) => {
           if (swallowClick.current) {
@@ -211,7 +221,7 @@ export function QuoteSlider({ cards }: { cards: ReviewCard[] }) {
           }
         }}
         aria-live={stopped || hold ? "polite" : "off"}
-        className={`flex w-full snap-x snap-mandatory overflow-x-auto overscroll-x-contain scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
+        className={`flex w-full snap-x snap-mandatory overflow-x-auto overscroll-x-contain scroll-smooth motion-reduce:scroll-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
           dragging ? "cursor-grabbing select-none" : "cursor-grab"
         }`}
       >

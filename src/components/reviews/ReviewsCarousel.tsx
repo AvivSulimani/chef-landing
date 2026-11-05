@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Chevron } from "./icons";
+import { Chevron } from "../icons";
 
 const GAP = 24;
 
@@ -72,7 +72,10 @@ export function ReviewsCarousel({ children }: { children: React.ReactNode }) {
         aria-label="המלצות של לקוחות"
         tabIndex={0}
         style={{ height }}
-        className="relative -mx-6 flex snap-x snap-mandatory scroll-px-6 gap-6 overflow-x-auto overflow-y-hidden scroll-smooth px-6 pb-1 transition-[height] duration-300 [scrollbar-width:none] md:mx-0 md:scroll-px-0 md:px-0 [&::-webkit-scrollbar]:hidden"
+        className={`relative -mx-6 flex snap-x snap-mandatory scroll-px-6 gap-6 overflow-x-auto overflow-y-hidden scroll-smooth px-6 pb-1 transition-[height] duration-300 [scrollbar-width:none] md:mx-0 md:scroll-px-0 md:px-0 [&::-webkit-scrollbar]:hidden ${
+          // soften the card that is cut off at the left edge, until the last one is reached
+          view.atEnd ? "" : "[mask-image:linear-gradient(to_right,transparent,#000_56px)]"
+        }`}
       >
         {children}
       </div>

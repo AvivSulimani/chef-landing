@@ -1,27 +1,18 @@
 import Image from "next/image";
 import {
   business,
-  googleSummary,
-  reviewCards,
   services,
   story,
-  type ReviewCard,
 } from "@/lib/content";
-import { distribute } from "@/lib/masonry";
 import { ContactForm } from "./ContactForm";
-import { ReviewsCarousel } from "./ReviewsCarousel";
-import { boxButton } from "./styles";
+import { boxButton, eyebrow, textLink } from "./styles";
 import {
   FacebookIcon,
   InstagramIcon,
   ServiceIcon,
-  Star,
   WhatsappIcon,
 } from "./icons";
 
-const eyebrow = "text-[10.5px] tracking-[2.4px] text-ink-faint md:text-[11px] md:tracking-[2.6px]";
-const textLink =
-  "border-b border-ink/30 pb-1 text-[11.5px] tracking-[1.4px] transition-colors hover:border-accent hover:text-accent md:text-xs md:tracking-[1.6px]";
 
 export function Hero() {
   return (
@@ -176,101 +167,6 @@ export function ServiceSections() {
  * desktop-sized image above. Falls back to the desktop file until a phone
  * screenshot exists.
  */
-function ReviewFigure({
-  review,
-  sizes,
-  className = "",
-}: {
-  review: ReviewCard;
-  sizes: string;
-  className?: string;
-}) {
-  // Chat screenshots sit on WhatsApp's beige wallpaper, so the card matches it
-  // while the image loads.
-  const tint = review.source === "WhatsApp" ? "bg-[#f0ece4]" : "bg-white";
-  return (
-    <figure className={`overflow-hidden border border-rule ${tint} ${className}`}>
-      <Image
-        src={review.image.src}
-        alt={review.alt}
-        width={review.image.width}
-        height={review.image.height}
-        sizes={sizes}
-        quality={90}
-        className="block h-auto w-full"
-      />
-      <figcaption className="sr-only">
-        {review.source} · {review.author}: {review.transcript}
-      </figcaption>
-    </figure>
-  );
-}
-
-function GoogleSummary() {
-  return (
-    <a
-      href={googleSummary.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group flex items-center justify-center gap-4 md:gap-5"
-    >
-      <span className="font-serif text-[32px] leading-none md:text-[40px]">
-        {googleSummary.rating}
-      </span>
-      <div className="flex flex-col gap-1.5">
-        <div className="flex gap-1" aria-label={`${googleSummary.rating} כוכבים`}>
-          {Array.from({ length: 5 }, (_, i) => (
-            <Star key={i} className="h-3.5 w-3.5" />
-          ))}
-        </div>
-        <span className={`${eyebrow} transition-colors group-hover:text-ink`}>
-          ביקורות בגוגל
-        </span>
-      </div>
-    </a>
-  );
-}
-
-export function Reviews() {
-  return (
-    <section id="reviews" className="bg-paper-warm px-6 py-16 md:px-14 md:py-[124px]">
-      <div className="mx-auto flex max-w-[1180px] flex-col gap-8 md:gap-[52px]">
-        <div className="flex flex-col items-center gap-2.5 md:gap-3.5">
-          <span className={eyebrow}>המלצות מלקוחות</span>
-          <h2 className="font-serif text-2xl md:text-[32px]">מה אומרים עלינו</h2>
-        </div>
-
-        <GoogleSummary />
-
-        {/* Phones and tablets: one card at a time */}
-        <div className="lg:hidden">
-          <ReviewsCarousel>
-            {reviewCards.map((review) => (
-              <ReviewFigure
-                key={review.id}
-                review={review}
-                sizes="min(86vw, 380px)"
-                className="w-[86vw] max-w-[380px] shrink-0 snap-start self-start"
-              />
-            ))}
-          </ReviewsCarousel>
-        </div>
-
-        {/* Desktop: a wall of cards in balanced columns */}
-        <div className="hidden items-start gap-5 lg:flex">
-          {distribute(reviewCards, 3).map((column, i) => (
-            <div key={i} className="flex min-w-0 flex-1 flex-col gap-5">
-              {column.map((review) => (
-                <ReviewFigure key={review.id} review={review} sizes="380px" />
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 export function Contact() {
   return (
     <section id="contact" className="flex justify-center px-6 py-16 md:px-14 md:py-[124px]">
@@ -358,3 +254,5 @@ export function Footer() {
     </footer>
   );
 }
+
+export { ReviewsSection as Reviews } from "./reviews/ReviewsSection";

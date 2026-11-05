@@ -2,11 +2,11 @@
  * The public address of the site. It feeds the canonical links, the social share preview, sitemap.xml and
  * robots.txt.
  *
- * On Vercel the production domain is picked up by itself (VERCEL_PROJECT_PRODUCTION_URL), so connecting a custom
- * domain needs no code change. To force a specific address, for example the "www" version, set
- * NEXT_PUBLIC_SITE_URL in the Vercel project settings.
+ * On Vercel the production domain is picked up by itself (VERCEL_PROJECT_PRODUCTION_URL). Anywhere else, and in a
+ * production build without that variable, the address below is used, so moving the site to another host needs no
+ * code change either. To force a different address, for example the "www" version, set NEXT_PUBLIC_SITE_URL.
  */
-const FALLBACK = "https://chef-landing-tau.vercel.app";
+const FALLBACK = "https://soil-dining.co.il";
 
 function resolveSiteUrl(): string {
   const forced = process.env.NEXT_PUBLIC_SITE_URL?.trim();

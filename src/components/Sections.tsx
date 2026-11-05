@@ -8,7 +8,9 @@ import {
   story,
   type ReviewCard,
 } from "@/lib/content";
+import { ContactForm } from "./ContactForm";
 import { ReviewsCarousel } from "./ReviewsCarousel";
+import { boxButton } from "./styles";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -19,10 +21,6 @@ import {
 const eyebrow = "text-[10.5px] tracking-[2.4px] text-ink-faint md:text-[11px] md:tracking-[2.6px]";
 const textLink =
   "border-b border-ink/30 pb-1 text-[11.5px] tracking-[1.4px] transition-colors hover:border-accent hover:text-accent md:text-xs md:tracking-[1.6px]";
-const boxButton =
-  "inline-flex h-12 items-center justify-center border border-ink px-6 text-[12.5px] tracking-[1.2px] transition-colors hover:bg-ink hover:text-paper md:px-[30px] md:text-[13px] md:tracking-[1.4px]";
-const flatButton =
-  "inline-flex h-12 items-center justify-center bg-accent px-6 text-[12.5px] tracking-[1.2px] text-white transition-opacity hover:opacity-85 md:px-[34px] md:text-[13px] md:tracking-[1.4px]";
 
 export function Hero() {
   return (
@@ -271,38 +269,6 @@ export function Contact() {
         <ContactForm />
       </div>
     </section>
-  );
-}
-
-function ContactForm() {
-  const field =
-    "w-full border-0 border-b border-ink/30 bg-transparent px-0.5 py-3 text-[15px] font-light text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-accent";
-
-  return (
-    <form
-      action={business.whatsapp}
-      method="get"
-      target="_blank"
-      className="mt-2 flex w-full flex-col gap-4 md:gap-5"
-    >
-      <input type="hidden" name="phone" value="972542253132" />
-      <input className={field} type="text" name="name" placeholder="שם מלא" autoComplete="name" />
-      <input className={field} type="tel" name="tel" placeholder="מספר טלפון" autoComplete="tel" />
-      <textarea
-        className={`${field} resize-none`}
-        name="text"
-        rows={2}
-        placeholder="ספרו לנו על האירוע – תאריך, מספר סועדים ומקום"
-      />
-      <div className="mt-2 flex flex-col gap-2.5 md:flex-row md:gap-3.5">
-        <button type="submit" className={flatButton}>
-          שליחה בוואטסאפ
-        </button>
-        <a href={business.phoneHref} className={boxButton}>
-          חייגו עכשיו
-        </a>
-      </div>
-    </form>
   );
 }
 

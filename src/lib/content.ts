@@ -2,10 +2,12 @@ export const business = {
   name: "Soil",
   owner: "Aviv Sulimani",
   ownerHe: "אביב סולימני",
+  ownerFirstHe: "אביב",
   tagline:
     "ארוחות פרטיות המתמחות בפיין דיינינג ואוכל עילי, תוך שימוש בחומרי גלם מקומיים ומחוברים לטבע",
   phone: "054-225-3132",
   phoneHref: "tel:0542253132",
+  whatsappNumber: "972542253132",
   whatsapp: "https://api.whatsapp.com/send?phone=972542253132",
   email: "Avivsulimani0@gmail.com",
   location: "גבת",

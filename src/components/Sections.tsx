@@ -224,7 +224,7 @@ function GoogleSummary() {
           ))}
         </div>
         <span className={`${eyebrow} transition-colors group-hover:text-ink`}>
-          {googleSummary.count} ביקורות בגוגל
+          ביקורות בגוגל
         </span>
       </div>
     </a>

@@ -1,5 +1,7 @@
 export const business = {
   name: "Soil",
+  // The registered business name (the brand on the site is Soil); used in the footer and the legal pages.
+  legalNameHe: "מטבח תוסס",
   owner: "Aviv Sulimani",
   ownerHe: "אביב סולימני",
   ownerFirstHe: "אביב",

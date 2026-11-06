@@ -41,8 +41,8 @@ export default function PrivacyPage() {
 
       <LegalSection heading="מי אחראי על המידע">
         <p>
-          האתר מופעל על ידי אביב סולימני (Soil by Aviv Sulimani), הוא בעל השליטה במידע שנמסר דרכו. פרטי
-          ההתקשרות: <Contact />.
+          האתר מופעל על ידי {business.legalNameHe} (Soil by Aviv Sulimani), עסק של אביב סולימני.{" "}
+          {business.legalNameHe} הוא בעל השליטה במידע שנמסר דרכו. פרטי ההתקשרות: <Contact />.
         </p>
       </LegalSection>
 

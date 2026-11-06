@@ -260,7 +260,13 @@ export function Footer() {
       {/* pl-[4.5rem] keeps the links clear of the floating accessibility button in the bottom-left corner */}
       <div className="mx-auto mt-7 flex max-w-[1180px] flex-col gap-3.5 border-t border-rule pl-[4.5rem] pt-5 md:mt-0 md:flex-row md:items-center md:justify-between md:pt-6">
         <span className="text-[0.65625rem] tracking-[1.2px] text-ink-faint md:text-[0.6875rem] md:tracking-[1.4px]">
-          © {new Date().getFullYear()} SOIL BY AVIV SULIMANI · כל הזכויות שמורות
+          © {new Date().getFullYear()} {business.legalNameHe} · SOIL BY AVIV SULIMANI
+          {/* on a phone "all rights reserved" gets its own line, so no separator dot is left hanging at a line end */}
+          <span aria-hidden className="hidden md:inline">
+            {" "}
+            ·{" "}
+          </span>
+          <span className="block md:inline">כל הזכויות שמורות</span>
         </span>
         <nav aria-label="מידע משפטי" className="flex flex-wrap gap-x-5 gap-y-2 text-[0.71875rem] tracking-[1px] text-ink-muted md:text-xs">
           <Link href="/accessibility" className="transition-colors hover:text-accent-ink">

@@ -41,14 +41,14 @@ export function OriginalReview({
         onClick={(event) => {
           if (event.target === dialog.current) dialog.current?.close();
         }}
-        className="m-auto max-h-[94vh] max-w-[94vw] overflow-auto border-0 bg-transparent p-0 backdrop:bg-ink/70"
+        className="focus-light m-auto max-h-[94vh] max-w-[94vw] overflow-auto border-0 bg-transparent p-0 backdrop:bg-[#141210]/75"
       >
         <div className="relative">
           <button
             type="button"
             onClick={() => dialog.current?.close()}
             aria-label="סגירה"
-            className="absolute start-3 top-3 z-10 flex h-10 w-10 items-center justify-center bg-white/90 text-ink shadow transition-colors hover:bg-ink hover:text-paper"
+            className="absolute start-3 top-3 z-10 flex h-10 w-10 items-center justify-center bg-white/90 text-[#141210] shadow transition-colors hover:bg-[#141210] hover:text-white"
           >
             <Close className="h-4 w-4" />
           </button>

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { motionAllowed, useMotionAllowed } from "@/lib/a11y";
 import type { ReviewCard } from "@/lib/content";
 import { Chevron, Star } from "../icons";
 import { eyebrow, textLink } from "../styles";
@@ -12,7 +13,23 @@ const DRAG_START_PX = 6;
 const FLICK_PX_PER_MS = 0.4;
 
 const arrow =
-  "flex h-[38px] w-[38px] shrink-0 items-center justify-center border border-ink/30 transition-colors enabled:hover:border-ink enabled:hover:bg-ink enabled:hover:text-paper disabled:opacity-30";
+  "flex h-[38px] w-[38px] shrink-0 items-center justify-center border border-ink/60 transition-colors enabled:hover:border-ink enabled:hover:bg-ink enabled:hover:text-paper disabled:opacity-30";
+
+function PauseIcon() {
+  return (
+    <svg viewBox="0 0 12 12" className="h-3 w-3" fill="currentColor" aria-hidden="true">
+      <path d="M2.5 1.5h2.6v9H2.5zM6.9 1.5h2.6v9H6.9z" />
+    </svg>
+  );
+}
+
+function PlayIcon() {
+  return (
+    <svg viewBox="0 0 12 12" className="h-3 w-3" fill="currentColor" aria-hidden="true">
+      <path d="M3 1.5v9l7.5-4.5z" />
+    </svg>
+  );
+}
 
 function QuoteMark() {
   return (
@@ -25,7 +42,7 @@ function QuoteMark() {
 function Attribution({ review }: { review: ReviewCard }) {
   return (
     <div className="flex flex-col gap-2.5">
-      <span className="text-[15px]">{review.author}</span>
+      <span className="text-[0.9375rem]">{review.author}</span>
       <span className={`${eyebrow} flex items-center gap-2.5`}>
         {review.source === "Google" && (
           <span className="flex gap-0.5 text-ink" aria-hidden="true">
@@ -62,6 +79,8 @@ export function QuoteSlider({ cards }: { cards: ReviewCard[] }) {
   const [stopped, setStopped] = useState(false);
   const [visible, setVisible] = useState(false);
   const [dragging, setDragging] = useState(false);
+  // false for a visitor who asked the system for less motion, or who pressed "stop motion" in the accessibility menu
+  const motion = useMotionAllowed();
   const frame = useRef(0);
   const swallowClick = useRef(false);
   const drag = useRef({ id: -1, startX: 0, startScroll: 0, moved: false, lastX: 0, lastT: 0, speed: 0 });
@@ -71,9 +90,8 @@ export function QuoteSlider({ cards }: { cards: ReviewCard[] }) {
       const el = track.current;
       if (!el) return;
       const clamped = Math.max(0, Math.min(count - 1, to));
-      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       // The page is RTL, so later slides sit to the left and scrollLeft runs negative.
-      el.scrollTo({ left: -clamped * el.clientWidth, behavior: reduce ? "auto" : "smooth" });
+      el.scrollTo({ left: -clamped * el.clientWidth, behavior: motionAllowed() ? "smooth" : "auto" });
     },
     [count],
   );
@@ -103,11 +121,10 @@ export function QuoteSlider({ cards }: { cards: ReviewCard[] }) {
   }, []);
 
   useEffect(() => {
-    if (!visible || hold || stopped || dragging || index >= count - 1) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!motion || !visible || hold || stopped || dragging || index >= count - 1) return;
     const timer = window.setTimeout(() => scrollToIndex(index + 1), AUTOPLAY_MS);
     return () => window.clearTimeout(timer);
-  }, [visible, hold, stopped, dragging, index, count, scrollToIndex]);
+  }, [motion, visible, hold, stopped, dragging, index, count, scrollToIndex]);
 
   // --- click and drag (mouse only; touch scrolls natively) -------------------
 
@@ -237,7 +254,7 @@ export function QuoteSlider({ cards }: { cards: ReviewCard[] }) {
             <div className="mx-auto flex w-full max-w-[1080px] flex-col items-center gap-10 px-1 text-center lg:flex-row lg:items-center lg:justify-between lg:gap-20 lg:text-start">
               <div className="flex max-w-[560px] flex-col items-center gap-7 lg:items-start">
                 <QuoteMark />
-                <p className="text-balance font-serif text-[22px] leading-[1.65] md:text-[28px] md:leading-[1.6]">
+                <p className="text-balance font-serif text-[1.375rem] leading-[1.65] md:text-[1.75rem] md:leading-[1.6]">
                   {review.excerpt}
                 </p>
                 <Attribution review={review} />
@@ -269,7 +286,11 @@ export function QuoteSlider({ cards }: { cards: ReviewCard[] }) {
         ))}
       </div>
 
-      <div className="flex items-center gap-5 md:gap-7">
+      {/*
+        Each dash is a 24 px target (WCAG 2.5.8), and ten of them do not fit beside the arrows on a phone: there the
+        dashes take a row of their own above the arrows (order-first), on a wide screen all of it is one row.
+      */}
+      <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-4 md:flex-nowrap md:gap-7">
         <button
           type="button"
           onClick={() => navigate(index - 1)}
@@ -279,7 +300,11 @@ export function QuoteSlider({ cards }: { cards: ReviewCard[] }) {
         >
           <Chevron direction="start" className="h-3 w-3" />
         </button>
-        <div className="flex items-center gap-1.5 md:gap-2.5" role="tablist" aria-label="בחירת המלצה">
+        <div
+          className="order-first flex w-full flex-wrap items-center justify-center md:order-none md:w-auto md:gap-2.5"
+          role="tablist"
+          aria-label="בחירת המלצה"
+        >
           {cards.map((review, i) => (
             <button
               key={review.id}
@@ -288,11 +313,11 @@ export function QuoteSlider({ cards }: { cards: ReviewCard[] }) {
               aria-selected={i === index}
               aria-label={`המלצה ${i + 1}`}
               onClick={() => navigate(i)}
-              className="group flex h-6 items-center"
+              className="group flex h-6 min-w-6 items-center justify-center"
             >
               <span
                 className={`block h-px transition-all duration-300 ${
-                  i === index ? "w-6 bg-ink md:w-8" : "w-3 bg-ink/25 group-hover:bg-ink/60 md:w-4"
+                  i === index ? "w-6 bg-ink md:w-8" : "w-3 bg-ink/55 group-hover:bg-ink md:w-4"
                 }`}
               />
             </button>
@@ -307,6 +332,17 @@ export function QuoteSlider({ cards }: { cards: ReviewCard[] }) {
         >
           <Chevron direction="end" className="h-3 w-3" />
         </button>
+        {/* WCAG 2.2.2: content that moves by itself for more than five seconds needs a way to pause it. */}
+        {motion && index < count - 1 && (
+          <button
+            type="button"
+            onClick={() => setStopped((s) => !s)}
+            aria-label={stopped ? "הפעלת המעבר האוטומטי בין ההמלצות" : "השהיית המעבר האוטומטי בין ההמלצות"}
+            className={arrow}
+          >
+            {stopped ? <PlayIcon /> : <PauseIcon />}
+          </button>
+        )}
       </div>
     </div>
   );

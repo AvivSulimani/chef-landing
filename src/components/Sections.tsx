@@ -7,6 +7,9 @@ import {
 } from "@/lib/content";
 import { ContactForm } from "./ContactForm";
 import { boxButton, eyebrow, textLink } from "./styles";
+
+/** An English phrase on a Hebrew page: it gets lang="en" so that screen readers pronounce it properly. */
+const latinOnly = /^[\x20-\x7E]+$/;
 import {
   FacebookIcon,
   InstagramIcon,
@@ -26,8 +29,10 @@ export function Hero() {
         sizes="100vw"
         className="object-cover"
       />
-      <div className="absolute inset-0 bg-[#141210]/34" />
-      <h1 className="relative z-10 ps-[15px] font-serif text-[46px] font-light tracking-[15px] text-white md:ps-[38px] md:text-[118px] md:tracking-[38px]">
+      <div className="absolute inset-0 bg-[#141210]/38" />
+      {/* A darker band behind the header keeps its small white text above 4.5:1 on every screen size. */}
+      <div aria-hidden="true" className="absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-[#141210]/55 to-transparent" />
+      <h1 className="relative z-10 ps-[15px] font-serif text-[2.875rem] font-light tracking-[15px] text-white md:ps-[38px] md:text-[7.375rem] md:tracking-[38px]">
         SOIL
       </h1>
     </section>
@@ -37,7 +42,7 @@ export function Hero() {
 export function Statement() {
   return (
     <section className="flex justify-center px-6 py-16 md:px-14 md:py-[124px]">
-      <p className="max-w-[780px] text-center text-base leading-[1.85] tracking-[0.8px] md:text-[21px] md:tracking-[1.5px]">
+      <p className="max-w-[780px] text-center text-base leading-[1.85] tracking-[0.8px] md:text-[1.3125rem] md:tracking-[1.5px]">
         {business.tagline}
       </p>
     </section>
@@ -50,9 +55,9 @@ export function Story() {
       <div className="flex max-w-[720px] flex-col gap-6 md:gap-8">
         <div className="flex flex-col items-center gap-2.5 md:gap-3.5">
           <span className={eyebrow}>{story.eyebrow}</span>
-          <h2 className="text-center font-serif text-2xl md:text-[32px]">{story.heading}</h2>
+          <h2 className="text-center font-serif text-2xl md:text-[2rem]">{story.heading}</h2>
         </div>
-        <div className="flex flex-col gap-[18px] text-[15px] font-light leading-[1.95] text-ink-muted md:gap-6 md:text-[16.5px] md:leading-[2.05]">
+        <div className="flex flex-col gap-[18px] text-[0.9375rem] font-light leading-[1.95] text-ink-muted md:gap-6 md:text-[1.03125rem] md:leading-[2.05]">
           {story.paragraphs.map((p) => (
             <p key={p.slice(0, 24)}>{p}</p>
           ))}
@@ -90,7 +95,7 @@ export function FullBleed({
 export function ServicesIndex() {
   return (
     <section id="services" className="px-6 pb-14 pt-16 md:px-14 md:pb-[108px] md:pt-[124px]">
-      <h2 className="mb-11 text-center font-serif text-[22px] tracking-[3.5px] md:mb-[78px] md:text-[30px] md:tracking-[5px]">
+      <h2 className="mb-11 text-center font-serif text-[1.375rem] tracking-[3.5px] md:mb-[78px] md:text-[1.875rem] md:tracking-[5px]">
         השירותים שלנו
       </h2>
       <div className="mx-auto grid max-w-[1080px] grid-cols-2 justify-items-center gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-10 md:gap-y-[62px]">
@@ -98,12 +103,12 @@ export function ServicesIndex() {
           <a
             key={service.id}
             href={`#${service.id}`}
-            className={`flex flex-col items-center gap-3.5 text-center transition-colors hover:text-accent md:gap-5 ${
+            className={`flex flex-col items-center gap-3.5 text-center transition-colors hover:text-accent-ink md:gap-5 ${
               i === services.length - 1 ? "col-span-2 md:col-span-1" : ""
             }`}
           >
             <ServiceIcon id={service.id} className="h-16 w-16 md:h-[88px] md:w-[88px]" />
-            <span className="text-[11.5px] tracking-[2px] md:text-xs md:tracking-[2.4px]">
+            <span className="text-[0.71875rem] tracking-[2px] md:text-xs md:tracking-[2.4px]">
               {service.shortLabel}
             </span>
           </a>
@@ -141,18 +146,21 @@ export function ServiceSections() {
             </div>
             <div className="flex max-w-[700px] flex-col gap-5">
               <div className="flex flex-col gap-1.5 md:gap-2">
-                <span className={eyebrow}>{service.eyebrow}</span>
-                <h3 className="font-serif text-[21px] md:text-[28px]">{service.title}</h3>
+                <span className={eyebrow} lang={latinOnly.test(service.eyebrow) ? "en" : undefined}>
+                  {service.eyebrow}
+                </span>
+                <h3 className="font-serif text-[1.3125rem] md:text-[1.75rem]">{service.title}</h3>
               </div>
-              <p className="text-[15px] font-light leading-[1.9] text-ink-muted md:text-[16.5px] md:leading-[2]">
+              <p className="text-[0.9375rem] font-light leading-[1.9] text-ink-muted md:text-[1.03125rem] md:leading-[2]">
                 {service.body}
               </p>
               <div className="mt-1 flex items-center gap-[18px] md:gap-[26px]">
                 <a href="#contact" className={textLink}>
-                  פרטים נוספים
+                  פרטים נוספים<span className="sr-only"> על {service.title}</span>
                 </a>
                 <a href={business.whatsapp} target="_blank" rel="noopener noreferrer" className={boxButton}>
                   {service.cta}
+                  <span className="sr-only"> – {service.title}, נפתח בלשונית חדשה</span>
                 </a>
               </div>
             </div>
@@ -174,11 +182,11 @@ export function Contact() {
       <div className="flex w-full max-w-[540px] flex-col items-center gap-5 md:gap-[26px]">
         <div className="flex flex-col items-center gap-2.5 md:gap-3.5">
           <span className={eyebrow}>רוצים לקבוע ארוחה?</span>
-          <h2 className="font-serif text-2xl md:text-[32px]">צרו קשר</h2>
+          <h2 className="font-serif text-2xl md:text-[2rem]">צרו קשר</h2>
         </div>
         <a
           href={business.phoneHref}
-          className="text-[22px] font-extralight tracking-[1.5px] transition-colors hover:text-accent md:text-[26px] md:tracking-[2px]"
+          className="text-[1.375rem] font-extralight tracking-[1.5px] transition-colors hover:text-accent-ink md:text-[1.625rem] md:tracking-[2px]"
         >
           {business.phone}
         </a>
@@ -199,16 +207,18 @@ export function Footer() {
     <footer className="border-t border-rule px-6 pb-7 pt-10 md:px-14 md:pb-8 md:pt-[66px]">
       <div className="mx-auto flex max-w-[1180px] flex-col gap-7 pb-0 md:grid md:grid-cols-[1.3fr_1fr_1fr] md:gap-14 md:pb-[46px]">
         <div className="flex flex-col gap-2 md:gap-3.5">
-          <span className="font-serif text-[15px] tracking-[5px] md:text-[17px] md:tracking-[6px]">
+          <span className="font-serif text-[0.9375rem] tracking-[5px] md:text-[1.0625rem] md:tracking-[6px]">
             SOIL
           </span>
-          <span className={eyebrow}>BY AVIV SULIMANI</span>
+          <span className={eyebrow} lang="en">
+            BY AVIV SULIMANI
+          </span>
         </div>
 
         <div className="hidden flex-col gap-4 md:flex">
           <span className={eyebrow}>מה אנחנו עושים</span>
           {services.map((s) => (
-            <a key={s.id} href={`#${s.id}`} className="text-[15px] transition-colors hover:text-accent">
+            <a key={s.id} href={`#${s.id}`} className="text-[0.9375rem] transition-colors hover:text-accent-ink">
               {s.shortLabel}
             </a>
           ))}
@@ -216,17 +226,17 @@ export function Footer() {
 
         <div className="flex flex-col gap-3 md:gap-4">
           <span className={eyebrow}>צרו קשר</span>
-          <a href={business.phoneHref} className="text-sm transition-colors hover:text-accent md:text-[15px]">
+          <a href={business.phoneHref} className="text-sm transition-colors hover:text-accent-ink md:text-[0.9375rem]">
             {business.phone}
           </a>
-          <a href={`mailto:${business.email}`} className="text-sm transition-colors hover:text-accent md:text-[15px]">
+          <a href={`mailto:${business.email}`} className="text-sm transition-colors hover:text-accent-ink md:text-[0.9375rem]">
             {business.email}
           </a>
           <a
             href={business.waze}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm transition-colors hover:text-accent md:text-[15px]"
+            className="text-sm transition-colors hover:text-accent-ink md:text-[0.9375rem]"
           >
             {business.location}
           </a>
@@ -238,7 +248,7 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={label}
-                className="transition-colors hover:text-accent"
+                className="transition-colors hover:text-accent-ink"
               >
                 <Icon className="h-[34px] w-[34px]" />
               </a>
@@ -247,18 +257,22 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="mx-auto mt-7 flex max-w-[1180px] flex-col gap-3.5 border-t border-rule pt-5 md:mt-0 md:flex-row md:items-center md:justify-between md:pt-6">
-        <span className="text-[10.5px] tracking-[1.2px] text-ink-faint md:text-[11px] md:tracking-[1.4px]">
+      {/* pl-[4.5rem] keeps the links clear of the floating accessibility button in the bottom-left corner */}
+      <div className="mx-auto mt-7 flex max-w-[1180px] flex-col gap-3.5 border-t border-rule pl-[4.5rem] pt-5 md:mt-0 md:flex-row md:items-center md:justify-between md:pt-6">
+        <span className="text-[0.65625rem] tracking-[1.2px] text-ink-faint md:text-[0.6875rem] md:tracking-[1.4px]">
           © {new Date().getFullYear()} SOIL BY AVIV SULIMANI · כל הזכויות שמורות
         </span>
-        <div className="flex gap-5 text-[11.5px] tracking-[1px] text-ink-muted md:text-xs">
-          <Link href="/accessibility" className="transition-colors hover:text-accent">
+        <nav aria-label="מידע משפטי" className="flex flex-wrap gap-x-5 gap-y-2 text-[0.71875rem] tracking-[1px] text-ink-muted md:text-xs">
+          <Link href="/accessibility" className="transition-colors hover:text-accent-ink">
             הצהרת נגישות
           </Link>
-          <Link href="/privacy" className="transition-colors hover:text-accent">
+          <Link href="/privacy" className="transition-colors hover:text-accent-ink">
             מדיניות פרטיות
           </Link>
-        </div>
+          <Link href="/terms" className="transition-colors hover:text-accent-ink">
+            תנאי שימוש
+          </Link>
+        </nav>
       </div>
     </footer>
   );

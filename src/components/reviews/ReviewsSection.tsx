@@ -10,7 +10,7 @@ export function ReviewsSection() {
       <div className="mx-auto flex max-w-[1180px] flex-col gap-8 md:gap-[52px]">
         <div className="flex flex-col items-center gap-2.5 md:gap-3.5">
           <span className={eyebrow}>המלצות מלקוחות</span>
-          <h2 className="font-serif text-2xl md:text-[32px]">מה אומרים עלינו</h2>
+          <h2 className="font-serif text-2xl md:text-[2rem]">מה אומרים עלינו</h2>
         </div>
 
         <GoogleSummary />

@@ -11,7 +11,7 @@ export function GoogleSummary() {
       rel="noopener noreferrer"
       className="group flex items-center justify-center gap-4 md:gap-5"
     >
-      <span className="font-serif text-[32px] leading-none md:text-[40px]">
+      <span className="font-serif text-[2rem] leading-none md:text-[2.5rem]">
         {googleSummary.rating}
       </span>
       <div className="flex flex-col gap-1.5">

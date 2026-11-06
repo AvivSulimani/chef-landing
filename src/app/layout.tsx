@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Heebo, Frank_Ruhl_Libre } from "next/font/google";
+import { AccessibilityMenu } from "@/components/AccessibilityMenu";
+import { a11yBootScript } from "@/lib/a11y-boot";
 import { siteDescription, siteName, siteUrl } from "@/lib/site";
 import "./globals.css";
 
@@ -36,12 +38,23 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
+    // suppressHydrationWarning: the script below adds data-a11y-* attributes to <html> before React starts.
     <html
       lang="he"
       dir="rtl"
       className={`${heebo.variable} ${frankRuhl.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col font-sans">{children}</body>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: a11yBootScript }} />
+      </head>
+      <body className="min-h-full flex flex-col font-sans">
+        <a href="#main" className="skip-link">
+          דלגו לתוכן הראשי
+        </a>
+        <AccessibilityMenu />
+        {children}
+      </body>
     </html>
   );
 }

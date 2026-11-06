@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
+import { useMotionAllowed } from "@/lib/a11y";
 import { galleryCategories, type GalleryCategory, type GalleryItem, type GalleryVideo } from "@/lib/gallery";
 import { boxButton } from "../styles";
 import { GalleryLightbox } from "./GalleryLightbox";
@@ -16,10 +17,16 @@ const FIRST_SCREEN = 16;
 /** A video tile plays silently while it is on screen, and never for visitors who asked for less motion. */
 function LoopingVideo({ item }: { item: GalleryVideo }) {
   const video = useRef<HTMLVideoElement>(null);
+  // false for a visitor who asked the system for less motion, or who pressed "stop motion" in the accessibility menu
+  const motion = useMotionAllowed();
 
   useEffect(() => {
     const el = video.current;
-    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!el) return;
+    if (!motion) {
+      el.pause();
+      return;
+    }
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) el.play().catch(() => {});
@@ -29,7 +36,7 @@ function LoopingVideo({ item }: { item: GalleryVideo }) {
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [motion]);
 
   return (
     <video
@@ -50,7 +57,7 @@ function LoopingVideo({ item }: { item: GalleryVideo }) {
 function PlayBadge() {
   return (
     <span
-      className="absolute bottom-2 start-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/85 text-ink"
+      className="absolute bottom-2 start-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/85 text-[#141210]"
       aria-hidden="true"
     >
       <svg viewBox="0 0 12 12" className="h-3 w-3" fill="currentColor">
@@ -163,7 +170,7 @@ export function GalleryExplorer({ items }: { items: GalleryItem[] }) {
               aria-controls={panelId}
               tabIndex={active ? 0 : -1}
               onClick={() => select(tab.id)}
-              className={`border-b pb-2 text-[12px] tracking-[1.8px] transition-colors md:text-[12.5px] md:tracking-[2px] ${
+              className={`border-b pb-2 text-[0.75rem] tracking-[1.8px] transition-colors md:text-[0.78125rem] md:tracking-[2px] ${
                 active ? "border-ink text-ink" : "border-transparent text-ink-muted hover:text-ink"
               }`}
             >

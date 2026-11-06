@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, type PointerEvent } from "react";
+import { motionAllowed } from "@/lib/a11y";
 import { galleryCategories, type GalleryItem } from "@/lib/gallery";
 import { Chevron, Close } from "../icons";
 
@@ -9,7 +10,7 @@ const SWIPE_PX = 60;
 
 // A dark tint behind the outline keeps the controls visible on bright photos too.
 const control =
-  "flex h-11 w-11 items-center justify-center border border-white/45 bg-[#141210]/55 text-white transition-colors hover:bg-white hover:text-ink";
+  "flex h-11 w-11 items-center justify-center border border-white/45 bg-[#141210]/55 text-white transition-colors hover:bg-white hover:text-[#141210]";
 
 /**
  * Full-screen viewer for the gallery, on the native <dialog>: Esc closes it, focus is trapped and
@@ -34,10 +35,11 @@ export function GalleryLightbox({
   const item = index === null ? null : items[index];
   const itemId = item?.id;
 
-  // A clip starts by itself, except for visitors who asked for less motion: they get the controls.
+  // A clip starts by itself, except for visitors who asked for less motion (the system setting, or "stop motion"
+  // in the accessibility menu): they get the controls.
   useEffect(() => {
     const el = video.current;
-    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!el || !motionAllowed()) return;
     el.play().catch(() => {});
   }, [itemId]);
 
@@ -95,7 +97,7 @@ export function GalleryLightbox({
         if (e.key === "ArrowLeft") go(1);
         else if (e.key === "ArrowRight") go(-1);
       }}
-      className="m-0 h-dvh max-h-none w-dvw max-w-none border-0 bg-transparent p-0 text-white backdrop:bg-[#141210]/95"
+      className="focus-light m-0 h-dvh max-h-none w-dvw max-w-none border-0 bg-transparent p-0 text-white backdrop:bg-[#141210]/95"
     >
       {item && (
         <div className="relative h-full w-full" onClick={closeOnBackdrop}>
@@ -161,7 +163,7 @@ export function GalleryLightbox({
             )}
           </div>
 
-          <p className="pointer-events-none absolute inset-x-0 bottom-4 flex items-center justify-center gap-3 text-[11px] tracking-[2.2px] text-white/75 md:bottom-6">
+          <p className="pointer-events-none absolute inset-x-0 bottom-4 flex items-center justify-center gap-3 text-[0.6875rem] tracking-[2.2px] text-white/75 md:bottom-6">
             <span>{galleryCategories.find((c) => c.id === item.category)?.label}</span>
             <span aria-hidden="true">·</span>
             <span dir="ltr">
